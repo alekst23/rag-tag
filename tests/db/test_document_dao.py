@@ -11,7 +11,7 @@ class TestDocumentDAO(unittest.TestCase):
 
     def setUp(self):
         self.db_connection = DBConnection(self.db_path)
-        self.document_dao = DocumentDAO(self.db_connection)
+        
         self.connection = self.db_connection.create_connection()
         self.cursor = self.connection.cursor()
         
@@ -21,6 +21,8 @@ class TestDocumentDAO(unittest.TestCase):
             sql_script = sql_file.read()
         self.cursor.executescript(sql_script)
         self.connection.commit()
+
+        self.document_dao = DocumentDAO(self.db_connection)
 
     def tearDown(self):
         self.connection.close()
