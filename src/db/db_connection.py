@@ -13,10 +13,3 @@ class DBConnection:
         except Error as e:
             print(f"Error connecting to database: {e}")
         return conn
-
-# Example usage
-if __name__ == "__main__":
-    database = "./path/to/database.sqlite"
-    conn = DBConnection(database).create_connection()
-    if conn is not None:
-        conn.close()
