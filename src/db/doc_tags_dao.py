@@ -7,15 +7,15 @@ class DocTagsDAO:
     def __init__(self, db_connection: DBConnection):
         self.db_connection = db_connection
 
-    def add_tags_to_doc(self, doc_id: int, tag_ids: List[int]) -> None:
+    def add_tags_to_doc(self, doc_id: int, tag_list: List[str]) -> None:
         connection = self.db_connection.create_connection()
         cursor = connection.cursor()
         try:
-            for tag_id in tag_ids:
-                cursor.execute("INSERT OR IGNORE INTO doc_tags (doc_id, tag_id) VALUES (?, ?)", (doc_id, tag_id))
+            for tag in tag_list:
+                cursor.execute("INSERT OR IGNORE INTO doc_tags (doc_id, tag) VALUES (?, ?)", (doc_id, tag))
             connection.commit()
         except Exception as e:
-            print(f"An error occurred while adding tags to document: {e}")
+            raise RuntimeError(f"An error occurred while adding tags to document: {e}")
         finally:
             connection.close()
 
@@ -27,8 +27,7 @@ class DocTagsDAO:
             tags = [row[0] for row in cursor.fetchall()]
             return tags
         except Exception as e:
-            print(f"An error occurred while retrieving tags for document: {e}")
-            return []
+            raise RuntimeError(f"An error occurred while retrieving tags for document: {e}")
         finally:
             connection.close()
 
@@ -40,8 +39,7 @@ class DocTagsDAO:
             doc_ids = [row[0] for row in cursor.fetchall()]
             return doc_ids
         except Exception as e:
-            print(f"An error occurred while retrieving documents for tag: {e}")
-            return []
+            raise RuntimeError(f"An error occurred while retrieving documents for tag: {e}")
         finally:
             connection.close()
 
@@ -52,6 +50,6 @@ class DocTagsDAO:
             cursor.execute("DELETE FROM doc_tags WHERE doc_id=?", (doc_id,))
             connection.commit()
         except Exception as e:
-            print(f"An error occurred while removing tags from document: {e}")
+            raise RuntimeError(f"An error occurred while removing tags from document: {e}")
         finally:
             connection.close()

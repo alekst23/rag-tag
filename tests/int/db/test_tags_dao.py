@@ -2,9 +2,12 @@ import unittest
 import sqlite3
 import os
 import numpy as np
+from numpy.testing import assert_array_equal
 from src.db.tags_dao import TagsDAO
 from src.db.db_connection import DBConnection
 from src.db.vector_index import VectorIndex
+from src.backend.llm import EMBEDDING_SIZE
+
 
 class TestTagsDAO(unittest.TestCase):
     @classmethod
@@ -25,7 +28,10 @@ class TestTagsDAO(unittest.TestCase):
         self.cursor.executescript(schema_sql)
         self.connection.commit()
 
-        self.tags_dao = TagsDAO(self.db_connection, vector_dimension=128)
+        # Set up a vector store
+        self.vector_index = VectorIndex(dimension=EMBEDDING_SIZE)   
+
+        self.tags_dao = TagsDAO(self.db_connection, self.vector_index)
 
     def tearDown(self):
         self.connection.close()
@@ -34,28 +40,31 @@ class TestTagsDAO(unittest.TestCase):
 
     def test_add_tag(self):
         tag = "test_tag"
-        embedding = np.random.rand(128).astype(np.float32).tobytes()
-        self.tags_dao.add_tag(tag, embedding)
+        embedding = np.random.rand(128).astype(np.float32)
+        faiss_id = 1
+        self.tags_dao.add_tag(tag, embedding, faiss_id)
         
-        self.cursor.execute("SELECT tag, embedding FROM tags WHERE tag=?", (tag,))
+        self.cursor.execute("SELECT tag, embedding, faiss_id FROM tags WHERE tag=?", (tag,))
         result = self.cursor.fetchone()
         self.assertIsNotNone(result)
         self.assertEqual(tag, result[0])
-        self.assertEqual(embedding, result[1])
+        self.assertTrue(isinstance(result[1],bytes))
+        self.assertEqual(faiss_id, result[2])
 
     def test_get_tag(self):
         tag = "test_tag"
-        embedding = np.random.rand(128).astype(np.float32).tobytes()
-        self.tags_dao.add_tag(tag, embedding)
+        embedding = np.random.rand(128).astype(np.float32)
+        faiss_id = 1
+        self.tags_dao.add_tag(tag, embedding, faiss_id)
         
-        retrieved_tag, retrieved_embedding = self.tags_dao.get_tag(tag)
-        self.assertEqual(tag, retrieved_tag)
-        self.assertEqual(embedding, retrieved_embedding)
+        retrieved_tag  = self.tags_dao.get_tag(tag)
+        self.assertEqual(tag, retrieved_tag[0])
+        assert_array_equal(embedding, retrieved_tag[1])
 
     def test_delete_tag(self):
         tag = "test_tag"
-        embedding = np.random.rand(128).astype(np.float32).tobytes()
-        self.tags_dao.add_tag(tag, embedding)
+        embedding = np.random.rand(128).astype(np.float32)
+        self.tags_dao.add_tag(tag, embedding, 1)
         self.tags_dao.delete_tag(tag)
         
         self.cursor.execute("SELECT tag FROM tags WHERE tag=?", (tag,))

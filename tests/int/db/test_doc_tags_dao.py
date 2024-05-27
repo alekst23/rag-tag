@@ -15,7 +15,7 @@ class TestDocTagsDAO(unittest.TestCase):
         self.cursor = self.connection.cursor()
 
         # Create tables for testing
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS doc_tags (doc_id INTEGER, tag_id INTEGER, tag TEXT)")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS doc_tags (doc_id INTEGER, tag TEXT)")
         self.connection.commit()
 
         self.doc_tags_dao = DocTagsDAO(self.db_connection)
@@ -30,11 +30,11 @@ class TestDocTagsDAO(unittest.TestCase):
 
     def test_add_tags_to_doc(self):
         doc_id = 1
-        tag_ids = [101, 102]
-        self.doc_tags_dao.add_tags_to_doc(doc_id, tag_ids)
-        self.cursor.execute("SELECT tag_id FROM doc_tags WHERE doc_id=?", (doc_id,))
+        tags = ["101", "102"]
+        self.doc_tags_dao.add_tags_to_doc(doc_id, tags)
+        self.cursor.execute("SELECT tag FROM doc_tags WHERE doc_id=?", (doc_id,))
         tags_in_db = [row[0] for row in self.cursor.fetchall()]
-        self.assertListEqual(tag_ids, tags_in_db)
+        self.assertListEqual(tags, tags_in_db)
 
     def test_get_doc_tags(self):
         doc_id = 2

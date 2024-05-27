@@ -4,11 +4,12 @@ import numpy as np
 class VectorIndex:
     def __init__(self, dimension):
         self.dimension = dimension
-        self.index = faiss.IndexFlatL2(self.dimension)
+        self.index = faiss.IndexFlatL2(int(self.dimension))
 
     def add_embedding(self, embedding):
         embedding_np = np.array([embedding], dtype=np.float32)
         self.index.add(embedding_np)
+        return self.index.ntotal
 
     def remove_embedding(self, id):
         # Placeholder: FAISS IndexFlatL2 does not support direct removal by ID.

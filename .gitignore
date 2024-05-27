@@ -1,3 +1,5 @@
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -160,3 +162,5 @@ cython_debug/
 #.idea/
 system-log.txt
 database.db
+.vscode/settings.json
+test_database.db
