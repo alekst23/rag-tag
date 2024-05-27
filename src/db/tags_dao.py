@@ -34,7 +34,7 @@ class TagsDAO:
         with self.db_connection.create_connection() as connection:
             cursor = connection.cursor()
             try:
-                cursor.execute("SELECT tag, embedding FROM tags WHERE tag = ?", (tag,))
+                cursor.execute("SELECT tag, embedding FROM tags WHERE tag = ?", (str(tag),))
                 result = cursor.fetchone()
                 if result:
                     tag = result[0]
@@ -43,8 +43,7 @@ class TagsDAO:
                 else:
                     return None
             except Exception as e:
-                print(f"An error occurred: {e}")
-                return None
+                raise RuntimeError(f"An error occurred: {e}")
 
     def load_existing_embeddings(self):
         with self.db_connection.create_connection() as connection:
@@ -57,15 +56,46 @@ class TagsDAO:
                     embedding_np = np.frombuffer(row[1], dtype=np.float32)
                     self.vector_index.add_embedding(tag, embedding_np)
             except Exception as e:
-                print(f"An error occurred: {e}")
+                raise RuntimeError(f"An error occurred: {e}")
 
     def delete_tag(self, tag: str) -> bool:
         with self.db_connection.create_connection() as connection:
             cursor = connection.cursor()
             try:
-                cursor.execute("DELETE FROM tags WHERE tag = ?", (tag,))
+                cursor.execute("DELETE FROM tags WHERE tag = ?", (str(tag),))
                 connection.commit()
                 return True
             except Exception as e:
-                print(f"An error occurred: {e}")
-                return False
+                raise RuntimeError(f"An error occurred: {e}")
+            
+    def get_tag_by_faiss_id(self, faiss_id: int) -> str:
+        with self.db_connection.create_connection() as connection:
+            cursor = connection.cursor()
+            try:
+                cursor.execute("SELECT tag FROM tags WHERE faiss_id = ?", (int(faiss_id),))
+                result = cursor.fetchone()
+                if result:
+                    return result[0]
+                else:
+                    return None
+            except Exception as e:
+                raise RuntimeError(f"An error occurred: {e}")
+            
+    def get_tags_by_faiss_ids(self, faiss_ids: list) -> list:
+        """
+        Retrieves tags from the database for a given list of faiss_ids.
+
+        :param faiss_ids: List of faiss_ids to retrieve tags for.
+        :return: List of tags corresponding to the given faiss_ids.
+        """
+        with self.db_connection.create_connection() as connection:
+            cursor = connection.cursor()
+            # Prepare a query string with the correct number of placeholders
+            placeholders = ','.join('?' for _ in faiss_ids)
+            query = f"SELECT tag FROM tags WHERE faiss_id IN ({placeholders})"
+            cursor.execute(query, faiss_ids)
+            # Fetch all matching rows
+            rows = cursor.fetchall()
+            # Extract tags from rows
+            tags = [row[0] for row in rows]
+            return tags

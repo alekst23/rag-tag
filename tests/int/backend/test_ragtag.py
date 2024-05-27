@@ -29,6 +29,17 @@ class TestRagTagIntegration(unittest.TestCase):
             cursor.executescript(sql_script)
         connection.commit()
 
+    @classmethod
+    def tearDownClass(self):
+        self.cursor.execute("DROP TABLE docs")
+        self.cursor.execute("DROP TABLE tags")
+        self.cursor.execute("DROP TABLE doc_tags")
+        self.connection.commit()
+
+        self.cursor.close()
+        self.connection.close()
+        os.remove(self.db_path)
+
     def setUp(self):
         # Setup for individual tests if needed
         pass
@@ -57,6 +68,24 @@ class TestRagTagIntegration(unittest.TestCase):
         for document_id in document_ids:
             tags = self.ragtag.doc_tags_dao.get_doc_tags(document_id)
             self.assertTrue(len(tags) > 0, "Tags should be generated for each document")
+
+    def test_search_documents(self):
+        documents = [
+            "Python is a programming language with a simple syntax.",
+            "To create a list in Python, use square brackets.",
+            "Pancakes usually contain flour, eggs, and milk."
+        ]
+        document_ids = self.ragtag.add_documents_bulk(documents)
+
+        # Search for documents containing the word "Python"
+        search_results = self.ragtag.search_documents("Python")
+        self.assertEqual(len(search_results), 2, "Two documents should be returned")
+
+        # Search for documents containing the word "Pancakes"
+        search_results = self.ragtag.search_documents("Pancakes")
+        self.assertEqual(len(search_results), 1, "One document should be returned")
+
+        
 
     @classmethod
     def tearDownClass(cls):

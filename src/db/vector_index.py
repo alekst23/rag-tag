@@ -19,4 +19,4 @@ class VectorIndex:
     def search(self, query_embedding, k=10):
         query_np = np.array([query_embedding], dtype=np.float32)
         distances, indices = self.index.search(query_np, k)
-        return indices[0], distances[0]
+        return [i+1 for i in indices[0]], distances[0]

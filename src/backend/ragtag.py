@@ -7,6 +7,7 @@ from src.db.doc_tags_dao import DocTagsDAO
 from .llm import generate_tags_for_text, generate_embedding_for_text, EMBEDDING_SIZE
 from src.db.vector_index import VectorIndex
 
+SEARCH_THRESHOLD = 0.3
 
 class RagTag:
     def __init__(self, db_connection):
@@ -67,4 +68,40 @@ class RagTag:
         # store tag
         return self.tags_dao.add_tag(tag, embedding, faiss_id)
 
+    def search_documents(self, query: str) -> List[str]:
+        """
+        Searches for documents based on a query string.
+        """
+        # Find matching tags
+        q_embedding = generate_embedding_for_text(query)
+
+        if not (vector_results := self.vector_index.search(q_embedding)):
+            print("No matching vectors found")
+            return []
+        
+        tag_scores = {}
+        for faiss_id, distance in zip(*vector_results):
+            if not (tag := self.tags_dao.get_tag_by_faiss_id(faiss_id)):
+                continue
+            if distance > SEARCH_THRESHOLD:
+                continue
+        
+            tag_scores[tag] = 1 / (1+distance)
+
+
+        # Get related docs into a matrix of tag -> doc_ids
+        doc_matrix = {tag: self.doc_tags_dao.get_tag_docs(tag) for tag in tag_scores.keys()}
+
+        # Fuse doc search results
+        doc_scores = {}
+        for tag, doc_ids in doc_matrix.items():
+            for doc_id in doc_ids:
+                doc_scores[doc_id] = doc_scores.get(doc_id, 0) + tag_scores[tag]
+
+        # Sort by score
+        sorted_docs = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)
+
+        return sorted_docs
+
+        # 
     # Additional methods and logic as required by the project
