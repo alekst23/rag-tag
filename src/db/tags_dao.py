@@ -68,7 +68,7 @@ class TagsDAO:
             cursor.execute("SELECT embedding FROM tags")
             embeddings = [np.frombuffer(row[0], dtype=np.float32) for row in cursor.fetchall()]
             if embeddings:
-                self.vector_index.add_embeddings(embeddings)
+                self.vector_index.add_embedding(embeddings)
         except Exception as e:
             print(f"An error occurred while loading existing embeddings: {e}")
         finally:
