@@ -68,7 +68,7 @@ class RagTag:
         # store tag
         return self.tags_dao.add_tag(tag, embedding, faiss_id)
 
-    def search_documents(self, query: str) -> List[str]:
+    def search_documents(self, query: str, threshold=SEARCH_THRESHOLD) -> List[str]:
         """
         Searches for documents based on a query string.
         """
@@ -83,9 +83,10 @@ class RagTag:
         for faiss_id, distance in zip(*vector_results):
             if not (tag := self.tags_dao.get_tag_by_faiss_id(faiss_id)):
                 continue
-            if distance > SEARCH_THRESHOLD:
+            if distance > threshold:
                 continue
-        
+            
+            # normalize distance to score
             tag_scores[tag] = 1 / (1+distance)
 
 
@@ -104,4 +105,3 @@ class RagTag:
         return sorted_docs
 
         # 
-    # Additional methods and logic as required by the project
