@@ -1,4 +1,5 @@
 # Rag-Tag
+![Semantic document taging](docs/diagram_01.png)
 
 ## Introduction
 
