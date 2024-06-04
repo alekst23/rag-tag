@@ -61,6 +61,12 @@ To get started with the Rag-Tag project, follow these steps:
 
 6. (TODO) Open the Single-Page Application (SPA) in your browser and start testing the RAG functionality.
 
+## Integration
+
+Run the following command to install RAG-TAG as a library:
+
+`pip install .`
+
 ## Testing
 
 ### Running pytests
