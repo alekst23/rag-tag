@@ -1,6 +1,6 @@
 import unittest
 
-from src.backend.llm import generate_embedding_for_text, generate_tags_for_text, EMBEDDING_SIZE
+from src.ragtag.backend.llm import generate_embedding_for_text, generate_tags_for_text, EMBEDDING_SIZE
 
 class TestLLMFunctions(unittest.TestCase):
     def test_generate_embedding_for_text(self):

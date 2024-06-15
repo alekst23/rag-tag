@@ -1,5 +1,5 @@
 import unittest
-from src.db.vector_index import VectorIndex
+from src.ragtag.db.vector_index import VectorIndex
 import numpy as np
 
 class TestVectorIndex(unittest.TestCase):

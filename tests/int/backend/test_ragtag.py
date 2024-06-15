@@ -1,8 +1,8 @@
 import unittest
 import sqlite3
 import os
-from src.db.db_connection import DBConnection
-from src.backend.ragtag import RagTag
+from src.ragtag.db.db_connection import DBConnection
+from src.ragtag.backend.ragtag import RagTag
 
 class TestRagTagIntegration(unittest.TestCase):
     @classmethod
@@ -18,9 +18,9 @@ class TestRagTagIntegration(unittest.TestCase):
     @classmethod
     def setupDatabaseSchema(cls, connection):
         schema_files = [
-            'src/db/schema/create_docs_table.sql',
-            'src/db/schema/create_tags_table.sql',
-            'src/db/schema/create_doc_tags_table.sql'
+            'src/ragtag/db/schema/create_docs_table.sql',
+            'src/ragtag/db/schema/create_tags_table.sql',
+            'src/ragtag/db/schema/create_doc_tags_table.sql'
         ]
         cursor = connection.cursor()
         for script_path in schema_files:

@@ -1,8 +1,8 @@
 import unittest
 import sqlite3
 import os
-from src.db.document_dao import DocumentDAO
-from src.db.db_connection import DBConnection
+from src.ragtag.db.document_dao import DocumentDAO
+from src.ragtag.db.db_connection import DBConnection
 
 class TestDocumentDAO(unittest.TestCase):
     @classmethod
@@ -15,7 +15,7 @@ class TestDocumentDAO(unittest.TestCase):
         self.connection = self.db_connection.create_connection()
         self.cursor = self.connection.cursor()
         
-        sql_script_path = 'src/db/schema/create_docs_table.sql'
+        sql_script_path = 'src/ragtag/db/schema/create_docs_table.sql'
         
         with open(sql_script_path, 'r') as sql_file:
             sql_script = sql_file.read()

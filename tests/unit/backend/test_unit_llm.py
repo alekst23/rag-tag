@@ -1,6 +1,6 @@
 import pytest
 
-from src.backend.llm import _format_tag
+from src.ragtag.backend.llm import _format_tag
 
 @pytest.mark.parametrize(
     "input_args, expected_output",

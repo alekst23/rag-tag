@@ -3,17 +3,17 @@ import sqlite3
 import os
 import numpy as np
 from numpy.testing import assert_array_equal
-from src.db.tags_dao import TagsDAO
-from src.db.db_connection import DBConnection
-from src.db.vector_index import VectorIndex
-from src.backend.llm import EMBEDDING_SIZE
+from src.ragtag.db.tags_dao import TagsDAO
+from src.ragtag.db.db_connection import DBConnection
+from src.ragtag.db.vector_index import VectorIndex
+from src.ragtag.backend.llm import EMBEDDING_SIZE
 
 
 class TestTagsDAO(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.db_path = "test_database.db"
-        cls.schema_path = 'src/db/schema/create_tags_table.sql'
+        cls.schema_path = 'src/ragtag/db/schema/create_tags_table.sql'
 
     def setUp(self):
         # Set up an in-memory SQLite database and initialize TagsDAO

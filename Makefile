@@ -16,5 +16,19 @@ test-llm:
 
 test-ragtag:
 	@$(ACTIVATE_VENV) && PYTHONPATH=$(PROJECT_ROOT) pytest tests/int/backend/test_ragtag.py
-	
-.PHONY: test
+	.PHONY: test
+
+install:
+	@echo "Installing RAG-TAG..."
+	@pip install -e .
+
+uninstall:
+	@echo "Uninstalling RAG-TAG..."
+	@pip uninstall -y ragtag
+
+reinstall: uninstall install
+
+status:
+	@pip show ragtag
+	@pip list | grep ragtag
+	@python -c "import ragtag"

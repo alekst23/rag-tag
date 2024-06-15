@@ -1,11 +1,11 @@
 import numpy as np
 from typing import List
 
-from src.db.document_dao import DocumentDAO
-from src.db.tags_dao import TagsDAO
-from src.db.doc_tags_dao import DocTagsDAO
+from ..db.document_dao import DocumentDAO
+from ..db.tags_dao import TagsDAO
+from ..db.doc_tags_dao import DocTagsDAO
 from .llm import generate_tags_for_text, generate_embedding_for_text, EMBEDDING_SIZE
-from src.db.vector_index import VectorIndex
+from ..db.vector_index import VectorIndex
 
 SEARCH_THRESHOLD = 0.3
 

@@ -1,8 +1,8 @@
 import unittest
 import sqlite3
 import os
-from src.db.doc_tags_dao import DocTagsDAO
-from src.db.db_connection import DBConnection
+from src.ragtag.db.doc_tags_dao import DocTagsDAO
+from src.ragtag.db.db_connection import DBConnection
 
 class TestDocTagsDAO(unittest.TestCase):
     @classmethod
