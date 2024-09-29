@@ -18,8 +18,6 @@ class DocumentDAO:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
-        finally:
-            connection.close()
 
     def read_document(self, document_id):
         connection = self.db_connection.create_connection()
@@ -35,8 +33,6 @@ class DocumentDAO:
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
-        finally:
-            connection.close()
 
     def update_document(self, document_id, new_document_text):
         connection = self.db_connection.create_connection()
@@ -49,8 +45,6 @@ class DocumentDAO:
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-        finally:
-            connection.close()
 
     def delete_document(self, document_id):
         connection = self.db_connection.create_connection()
@@ -63,13 +57,3 @@ class DocumentDAO:
         except Exception as e:
             print(f"An error occurred: {e}")
             return False
-        finally:
-            connection.close()
-
-# Add your modifications and additions below this line
-
-# Placeholder comment
-
-# Placeholder function
-def new_function():
-    pass

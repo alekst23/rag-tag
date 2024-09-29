@@ -1,25 +1,45 @@
 import numpy as np
 from typing import List
+from sqlite3 import Connection
+import os
 
 from ..db.document_dao import DocumentDAO
 from ..db.tags_dao import TagsDAO
 from ..db.doc_tags_dao import DocTagsDAO
 from .llm import generate_tags_for_text, generate_embedding_for_text, EMBEDDING_SIZE
 from ..db.vector_index import VectorIndex
+from ..db.db_connection import DBConnection
 
 SEARCH_THRESHOLD = 0.3
 
 class RagTag:
-    def __init__(self, db_connection):
+    def __init__(self, db_connection: DBConnection):
         """
         Initializes the RagTag system with a database connection.
         """
+        self.db_connection = db_connection
+        self.setupDatabaseSchema()
+
         self.vector_index = VectorIndex(dimension=EMBEDDING_SIZE)
 
-        self.db_connection = db_connection
         self.document_dao = DocumentDAO(db_connection)
         self.tags_dao = TagsDAO(db_connection, self.vector_index)
         self.doc_tags_dao = DocTagsDAO(db_connection)
+
+
+    def setupDatabaseSchema(self):
+        schema_files = [
+            'src/ragtag/db/schema/create_docs_table.sql',
+            'src/ragtag/db/schema/create_tags_table.sql',
+            'src/ragtag/db/schema/create_doc_tags_table.sql'
+        ]
+        connection = self.db_connection.create_connection()
+        cursor = connection.cursor()
+        for script_path in schema_files:
+            with open( os.path.abspath(script_path) , 'r') as sql_file:
+                sql_script = sql_file.read()
+            cursor.executescript(sql_script)
+        connection.commit()
 
     def add_document(self, document_text):
         """

@@ -16,8 +16,7 @@ class DocTagsDAO:
             connection.commit()
         except Exception as e:
             raise RuntimeError(f"An error occurred while adding tags to document: {e}")
-        finally:
-            connection.close()
+
 
     def get_doc_tags(self, doc_id: int) -> List[str]:
         connection = self.db_connection.create_connection()
@@ -28,8 +27,7 @@ class DocTagsDAO:
             return tags
         except Exception as e:
             raise RuntimeError(f"An error occurred while retrieving tags for document: {e}")
-        finally:
-            connection.close()
+
 
     def get_tag_docs(self, tag: str) -> List[int]:
         connection = self.db_connection.create_connection()
@@ -40,8 +38,7 @@ class DocTagsDAO:
             return doc_ids
         except Exception as e:
             raise RuntimeError(f"An error occurred while retrieving documents for tag: {e}")
-        finally:
-            connection.close()
+
 
     def remove_doc_tags(self, doc_id: int) -> None:
         connection = self.db_connection.create_connection()
@@ -51,5 +48,4 @@ class DocTagsDAO:
             connection.commit()
         except Exception as e:
             raise RuntimeError(f"An error occurred while removing tags from document: {e}")
-        finally:
-            connection.close()
+
